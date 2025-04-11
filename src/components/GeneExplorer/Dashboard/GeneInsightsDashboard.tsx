@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { BookMarked, Pills, FlaskConical, FileText } from "lucide-react";
+import { Pill, BookMarked, FlaskConical, FileText } from "lucide-react";
 
 interface DashboardProps {
   data: {
@@ -56,7 +56,7 @@ const GeneInsightsDashboard = ({ data = mockDashboardData }: Partial<DashboardPr
             <Card className="hover-scale transition-all">
               <CardContent className="p-6 flex flex-col items-center">
                 <div className="rounded-full bg-blue-100 dark:bg-blue-900/30 p-3 mb-4">
-                  <Pills className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                  <Pill className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <CardTitle className="text-3xl font-bold">{data.fdaApprovedCount}</CardTitle>
                 <p className="text-sm text-muted-foreground mt-2">FDA Approved Genes</p>
