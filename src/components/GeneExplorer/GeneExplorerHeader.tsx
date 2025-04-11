@@ -63,9 +63,9 @@ const GeneExplorerHeader = ({ weights, onWeightsChange }: GeneExplorerHeaderProp
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Expression Levels</SelectItem>
-              <SelectItem value="high">High Expression (Log2FC > 1)</SelectItem>
-              <SelectItem value="low">Low Expression (Log2FC < -1)</SelectItem>
-              <SelectItem value="significant">Significant Only (p < 0.05)</SelectItem>
+              <SelectItem value="high">High Expression (Log2FC &gt; 1)</SelectItem>
+              <SelectItem value="low">Low Expression (Log2FC &lt; -1)</SelectItem>
+              <SelectItem value="significant">Significant Only (p &lt; 0.05)</SelectItem>
             </SelectContent>
           </Select>
         </div>
