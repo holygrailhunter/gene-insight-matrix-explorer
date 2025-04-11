@@ -1,12 +1,13 @@
-
 import { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ArrowUpDown, Info, ChevronUp, ChevronDown } from "lucide-react";
+import { ArrowUpDown, Info, ChevronUp, ChevronDown, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import GeneDetailDialog from "./GeneDetailDialog";
 import { generateMockGeneData } from "@/lib/mockData";
 import { cn } from "@/lib/utils";
+import { useFavoriteGenes } from "./Favorites/FavoriteGenesContext";
+import { toast } from "sonner";
 
 export interface Gene {
   id: string;
@@ -38,9 +39,10 @@ interface GeneHeatmapProps {
     druggability: number;
     expression: number;
   };
+  onCompareGenes?: () => void;
 }
 
-const GeneHeatmap = ({ weights }: GeneHeatmapProps) => {
+const GeneHeatmap = ({ weights, onCompareGenes }: GeneHeatmapProps) => {
   const [genes, setGenes] = useState<Gene[]>([]);
   const [selectedGene, setSelectedGene] = useState<Gene | null>(null);
   const [sortConfig, setSortConfig] = useState<{
@@ -49,6 +51,7 @@ const GeneHeatmap = ({ weights }: GeneHeatmapProps) => {
   } | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const { addFavorite, removeFavorite, isFavorite } = useFavoriteGenes();
 
   const comparisons = [
     "SubtypeA_vs_Control",
@@ -92,7 +95,7 @@ const GeneHeatmap = ({ weights }: GeneHeatmapProps) => {
     setSortConfig({ key, direction });
 
     const sortedGenes = [...genes].sort((a, b) => {
-      let aValue, bValue;
+      let aValue: any, bValue: any;
       
       if (key === 'score') {
         aValue = parseFloat(calculateScore(a));
@@ -105,7 +108,6 @@ const GeneHeatmap = ({ weights }: GeneHeatmapProps) => {
         aValue = a[key as keyof Gene];
         bValue = b[key as keyof Gene];
         
-        // Handle boolean values
         if (typeof aValue === 'boolean') {
           aValue = aValue ? 1 : 0;
           bValue = bValue as boolean ? 1 : 0;
@@ -127,14 +129,16 @@ const GeneHeatmap = ({ weights }: GeneHeatmapProps) => {
     setIsDialogOpen(true);
   };
 
-  const getExpressionColor = (value: number) => {
-    if (value === 0) return 'bg-gray-100';
-    const absValue = Math.abs(value);
-    const intensity = Math.min(Math.floor(absValue * 20), 100);
-
-    return value > 0
-      ? `bg-gradient-to-r from-red-${intensity} to-red-${intensity+100}`
-      : `bg-gradient-to-r from-blue-${intensity} to-blue-${intensity+100}`;
+  const handleToggleFavorite = (event: React.MouseEvent, gene: Gene) => {
+    event.stopPropagation();
+    
+    if (isFavorite(gene.id)) {
+      removeFavorite(gene.id);
+      toast.info(`${gene.symbol} removed from favorites`);
+    } else {
+      addFavorite(gene);
+      toast.success(`${gene.symbol} added to favorites`);
+    }
   };
 
   const getExpressionClass = (value: number) => {
@@ -175,7 +179,7 @@ const GeneHeatmap = ({ weights }: GeneHeatmapProps) => {
           <TableHeader className="sticky top-0 z-10">
             <TableRow>
               <TableHead 
-                className="bg-white cursor-pointer hover:bg-gray-50" 
+                className="bg-white cursor-pointer hover:bg-gray-50 dark:bg-gray-950 dark:hover:bg-gray-900" 
                 onClick={() => handleSort('symbol')}
               >
                 Gene {renderSortIcon('symbol')}
@@ -184,7 +188,7 @@ const GeneHeatmap = ({ weights }: GeneHeatmapProps) => {
               {comparisons.map((comparison) => (
                 <TableHead 
                   key={comparison} 
-                  className="bg-white cursor-pointer hover:bg-gray-50"
+                  className="bg-white cursor-pointer hover:bg-gray-50 dark:bg-gray-950 dark:hover:bg-gray-900"
                   onClick={() => handleSort(`expression_${comparison}`)}
                 >
                   <div className="whitespace-nowrap">
@@ -194,31 +198,35 @@ const GeneHeatmap = ({ weights }: GeneHeatmapProps) => {
               ))}
               
               <TableHead 
-                className="bg-white cursor-pointer hover:bg-gray-50"
+                className="bg-white cursor-pointer hover:bg-gray-50 dark:bg-gray-950 dark:hover:bg-gray-900"
                 onClick={() => handleSort('fdaApproved')}
               >
                 FDA {renderSortIcon('fdaApproved')}
               </TableHead>
               
               <TableHead 
-                className="bg-white cursor-pointer hover:bg-gray-50"
+                className="bg-white cursor-pointer hover:bg-gray-50 dark:bg-gray-950 dark:hover:bg-gray-900" 
                 onClick={() => handleSort('clinicalStudies')}
               >
                 Clinical Studies {renderSortIcon('clinicalStudies')}
               </TableHead>
               
               <TableHead 
-                className="bg-white cursor-pointer hover:bg-gray-50"
+                className="bg-white cursor-pointer hover:bg-gray-50 dark:bg-gray-950 dark:hover:bg-gray-900"
                 onClick={() => handleSort('druggability')}
               >
                 Druggability {renderSortIcon('druggability')}
               </TableHead>
               
               <TableHead 
-                className="bg-white cursor-pointer hover:bg-gray-50"
+                className="bg-white cursor-pointer hover:bg-gray-50 dark:bg-gray-950 dark:hover:bg-gray-900"
                 onClick={() => handleSort('score')}
               >
                 Score {renderSortIcon('score')}
+              </TableHead>
+
+              <TableHead className="bg-white dark:bg-gray-950 w-10">
+                <span className="sr-only">Actions</span>
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -227,7 +235,7 @@ const GeneHeatmap = ({ weights }: GeneHeatmapProps) => {
             {genes.map((gene) => (
               <TableRow 
                 key={gene.id}
-                className="hover:bg-gray-50 cursor-pointer"
+                className="hover:bg-blue-50/30 dark:hover:bg-blue-950/30 cursor-pointer"
                 onClick={() => handleGeneClick(gene)}
               >
                 <TableCell className="font-medium whitespace-nowrap">
@@ -297,6 +305,27 @@ const GeneHeatmap = ({ weights }: GeneHeatmapProps) => {
                   >
                     {calculateScore(gene)}
                   </Badge>
+                </TableCell>
+
+                <TableCell>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 w-8 p-0"
+                    onClick={(e) => handleToggleFavorite(e, gene)}
+                  >
+                    <Star 
+                      className={cn(
+                        "h-4 w-4", 
+                        isFavorite(gene.id) 
+                          ? "fill-amber-400 text-amber-400" 
+                          : "text-gray-400 hover:text-amber-400"
+                      )} 
+                    />
+                    <span className="sr-only">
+                      {isFavorite(gene.id) ? "Remove from favorites" : "Add to favorites"}
+                    </span>
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
