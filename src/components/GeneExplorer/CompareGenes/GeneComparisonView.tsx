@@ -1,8 +1,7 @@
-
 import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from "recharts";
+import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from "recharts";
 import { Badge } from "@/components/ui/badge";
 import { X, Plus } from "lucide-react";
 import { Gene } from "../GeneHeatmap";
@@ -32,7 +31,6 @@ const GeneComparisonView = ({ availableGenes = [], onClose }: GeneComparisonView
   };
 
   const radarData = useMemo(() => {
-    // Create data for radar chart comparing selected genes
     const metrics = [
       { name: "Druggability", fullMark: 10 },
       { name: "Publications", fullMark: 10 },
@@ -60,7 +58,6 @@ const GeneComparisonView = ({ availableGenes = [], onClose }: GeneComparisonView
             result[gene.symbol] = Math.min(gene.patents / 2, 10);
             break;
           case "Expression":
-            // Calculate average expression across subtypes
             const avgExpr = Object.values(gene.subtypeExpressions).reduce(
               (sum, expr) => sum + Math.abs(expr.value), 
               0
