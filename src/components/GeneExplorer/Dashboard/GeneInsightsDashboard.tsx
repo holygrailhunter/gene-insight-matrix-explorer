@@ -1,9 +1,15 @@
-
-import { useState } from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, LineChart, Line, AreaChart, Area, ScatterChart, Scatter, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from "recharts";
-import { Pill, BookMarked, FlaskConical, FileText, ChartBar, ChartPie, Database, Microscope, Molecule, ChartLine } from "lucide-react";
+import { 
+  PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, 
+  ResponsiveContainer, LineChart, Line, AreaChart, Area, ScatterChart, Scatter, 
+  RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar 
+} from "recharts";
+import { 
+  Pill, BookMarked, FlaskConical, FileText, ChartBar, 
+  ChartPie, Database, ChartLine, Microscope 
+} from "lucide-react";  // Removed 'Molecule'
 import { Badge } from "@/components/ui/badge";
 import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 import { Button } from "@/components/ui/button";
@@ -152,7 +158,7 @@ const GeneInsightsDashboard = ({ data = mockDashboardData }: Partial<DashboardPr
             Expression Analysis
           </TabsTrigger>
           <TabsTrigger value="druggability" className="rounded-md text-sm">
-            <Molecule className="h-4 w-4 mr-2" />
+            <Microscope className="h-4 w-4 mr-2" />
             Druggability
           </TabsTrigger>
           <TabsTrigger value="pathways" className="rounded-md text-sm">
@@ -488,7 +494,7 @@ const GeneInsightsDashboard = ({ data = mockDashboardData }: Partial<DashboardPr
               <Card className="border-none shadow-md">
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center">
-                    <Molecule className="h-5 w-5 mr-2 text-blue-500" />
+                    <Microscope className="h-5 w-5 mr-2 text-blue-500" />
                     Binding Site Quality
                   </CardTitle>
                 </CardHeader>
@@ -568,101 +574,4 @@ const GeneInsightsDashboard = ({ data = mockDashboardData }: Partial<DashboardPr
                         <Bar dataKey="accuracy" fill="#3b82f6" name="Accuracy" />
                         <Bar dataKey="recall" fill="#ef4444" name="Recall" />
                         <Bar dataKey="precision" fill="#16a34a" name="Precision" />
-                        <Bar dataKey="f1Score" fill="#eab308" name="F1 Score" />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="pathways" className="space-y-6 mt-0">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="border-none shadow-md">
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center">
-                  <Microscope className="h-5 w-5 mr-2 text-blue-500" />
-                  Top Enriched Pathways
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="h-[300px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart
-                      data={mockPathwayData.enrichedPathways}
-                      margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                      layout="vertical"
-                    >
-                      <XAxis type="number" />
-                      <YAxis dataKey="pathway" type="category" width={100} />
-                      <Tooltip 
-                        contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: '8px' }} 
-                        formatter={(value, name) => [`${value}`, name === "enrichmentScore" ? "Enrichment Score" : "Gene Count"]}
-                      />
-                      <Legend />
-                      <Bar dataKey="enrichmentScore" fill="#3b82f6" name="Enrichment Score" />
-                      <Bar dataKey="geneCount" fill="#16a34a" name="Gene Count" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-none shadow-md">
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center">
-                  <ChartBar className="h-5 w-5 mr-2 text-blue-500" />
-                  Gene Set Overlap
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="h-[300px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart
-                      data={mockPathwayData.geneSetOverlap}
-                      margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                    >
-                      <XAxis dataKey="set" />
-                      <YAxis />
-                      <Tooltip contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: '8px' }} />
-                      <Legend />
-                      <Bar dataKey="overlap" stackId="a" fill="#3b82f6" name="Overlap" />
-                      <Bar dataKey="uniqueA" stackId="a" fill="#16a34a" name="Unique to Set A" />
-                      <Bar dataKey="uniqueB" stackId="a" fill="#ef4444" name="Unique to Set B" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-          
-          <Card className="border-none shadow-md">
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Database className="h-5 w-5 mr-2 text-blue-500" />
-                Gene-Disease Association Map
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[400px] bg-gray-50 dark:bg-gray-800 rounded-lg flex items-center justify-center">
-                <div className="text-center p-6">
-                  <Molecule className="h-12 w-12 mx-auto mb-4 text-blue-500" />
-                  <h3 className="text-xl font-medium mb-2">Network Visualization</h3>
-                  <p className="max-w-md text-sm text-gray-600 dark:text-gray-400">
-                    Interactive gene-disease network visualization would be displayed here, showing connections between genes, 
-                    pathways, and associated diseases with edge weights indicating strength of evidence.
-                  </p>
-                  <Button variant="outline" size="sm" className="mt-4">Load Network Data</Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
-  );
-};
-
-export default GeneInsightsDashboard;
+                        <Bar dataKey="f1Score" fill="#eab308" name="F
