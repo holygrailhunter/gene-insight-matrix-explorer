@@ -110,3 +110,51 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   z-index: 1;
 }
+
+.hover-scale {
+  @apply transition-transform duration-200 hover:scale-105;
+}
+
+.glass-card {
+  @apply bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-white/20 dark:border-gray-700/20 shadow-lg;
+}
+
+.text-gradient {
+  @apply bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent;
+}
+
+.story-link {
+  @apply relative inline-block after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-primary after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left;
+}
+
+.pulse {
+  @apply animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite];
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100 dark:bg-gray-800 rounded-full;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-600 rounded-full hover:bg-gray-400 dark:hover:bg-gray-500;
+}
+
+/* Chart styling */
+.recharts-cartesian-axis-tick-value {
+  @apply fill-gray-500 dark:fill-gray-400 text-xs;
+}
+
+.recharts-legend-item-text {
+  @apply fill-gray-700 dark:fill-gray-300 text-xs;
+}
+
+.recharts-tooltip-label {
+  @apply text-gray-700 dark:text-gray-700;
+}
+
