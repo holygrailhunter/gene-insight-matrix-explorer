@@ -1,9 +1,9 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, LineChart, Line, AreaChart, Area } from "recharts";
 import { Pill, BookMarked, FlaskConical, FileText } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface DashboardProps {
   data: {
@@ -16,6 +16,35 @@ interface DashboardProps {
     topPublications: Array<{ gene: string; count: number }>;
   };
 }
+
+const mockExpressionAnalysis = {
+  timeSeriesData: [
+    { timepoint: "0h", SubtypeA: 1.2, SubtypeB: 0.8, SubtypeC: 0.3 },
+    { timepoint: "12h", SubtypeA: 2.1, SubtypeB: 1.5, SubtypeC: 0.7 },
+    { timepoint: "24h", SubtypeA: 2.8, SubtypeB: 1.9, SubtypeC: 1.1 },
+    { timepoint: "48h", SubtypeA: 3.2, SubtypeB: 2.3, SubtypeC: 1.8 },
+    { timepoint: "72h", SubtypeA: 2.9, SubtypeB: 2.0, SubtypeC: 1.5 }
+  ],
+  subtypeDistribution: [
+    { subtype: "SubtypeA", upregulated: 145, downregulated: 98, unchanged: 257 },
+    { subtype: "SubtypeB", upregulated: 122, downregulated: 134, unchanged: 244 },
+    { subtype: "SubtypeC", upregulated: 167, downregulated: 89, unchanged: 244 }
+  ]
+};
+
+const mockDruggabilityData = {
+  druggabilityScores: [
+    { category: "Small Molecule", high: 125, medium: 234, low: 141 },
+    { category: "Antibody", high: 87, medium: 198, low: 215 },
+    { category: "Other", high: 45, medium: 167, low: 288 }
+  ],
+  structuralAnalysis: [
+    { feature: "Binding Pockets", count: 287, percentage: 57 },
+    { feature: "Known Domains", count: 342, percentage: 68 },
+    { feature: "Active Sites", count: 198, percentage: 40 },
+    { feature: "Allosteric Sites", count: 156, percentage: 31 }
+  ]
+};
 
 const mockDashboardData = {
   fdaApprovedCount: 12,
@@ -155,36 +184,103 @@ const GeneInsightsDashboard = ({ data = mockDashboardData }: Partial<DashboardPr
         </TabsContent>
 
         <TabsContent value="expression">
-          <Card>
-            <CardHeader>
-              <CardTitle>Expression Analysis Across Subtypes</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground mb-6">
-                This dashboard will show detailed expression analysis across different subtypes.
-                Configure the visualization in the settings panel.
-              </p>
-              <div className="h-[300px] flex items-center justify-center border border-dashed rounded-lg">
-                <p className="text-muted-foreground">Additional expression visualizations to be implemented</p>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="grid gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Expression Analysis</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={mockExpressionAnalysis.timeSeriesData}>
+                      <XAxis dataKey="timepoint" />
+                      <YAxis label={{ value: 'Expression Level (log2FC)', angle: -90, position: 'insideLeft' }} />
+                      <Tooltip />
+                      <Legend />
+                      <Line type="monotone" dataKey="SubtypeA" stroke="#ef4444" />
+                      <Line type="monotone" dataKey="SubtypeB" stroke="#3b82f6" />
+                      <Line type="monotone" dataKey="SubtypeC" stroke="#22c55e" />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Subtype Distribution</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={mockExpressionAnalysis.subtypeDistribution}>
+                      <XAxis dataKey="subtype" />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Bar dataKey="upregulated" fill="#ef4444" stackId="a" />
+                      <Bar dataKey="downregulated" fill="#3b82f6" stackId="a" />
+                      <Bar dataKey="unchanged" fill="#9ca3af" stackId="a" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="druggability">
-          <Card>
-            <CardHeader>
-              <CardTitle>Druggability Assessment</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground mb-6">
-                Evaluate target druggability metrics and tractability scores across the gene dataset.
-              </p>
-              <div className="h-[300px] flex items-center justify-center border border-dashed rounded-lg">
-                <p className="text-muted-foreground">Additional druggability metrics to be implemented</p>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="grid gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Druggability Assessment</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={mockDruggabilityData.druggabilityScores}>
+                      <XAxis dataKey="category" />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Bar dataKey="high" fill="#16a34a" stackId="a" name="High Score" />
+                      <Bar dataKey="medium" fill="#eab308" stackId="a" name="Medium Score" />
+                      <Bar dataKey="low" fill="#d1d5db" stackId="a" name="Low Score" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Structural Features</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-4">
+                  {mockDruggabilityData.structuralAnalysis.map((feature) => (
+                    <Card key={feature.feature}>
+                      <CardContent className="p-4">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-medium">{feature.feature}</span>
+                          <Badge variant="outline">{feature.percentage}%</Badge>
+                        </div>
+                        <div className="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-blue-600 rounded-full"
+                            style={{ width: `${feature.percentage}%` }}
+                          />
+                        </div>
+                        <span className="text-xs text-muted-foreground mt-1">
+                          {feature.count} genes
+                        </span>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
     </div>

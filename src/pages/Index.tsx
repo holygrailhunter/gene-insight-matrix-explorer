@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import GeneHeatmap from "@/components/GeneExplorer/GeneHeatmap";
 import GeneExplorerHeader from "@/components/GeneExplorer/GeneExplorerHeader";
@@ -21,7 +20,7 @@ const Index = () => {
     druggability: 9,
     expression: 7,
   });
-  const [activeTab, setActiveTab] = useState("heatmap");
+  const [activeTab, setActiveTab] = useState("dashboard");
   const [showFavorites, setShowFavorites] = useState(false);
   const [mockGenes, setMockGenes] = useState(() => 
     generateMockGeneData(50, [
@@ -43,8 +42,8 @@ const Index = () => {
             <div className="flex justify-between items-center mt-6 border-b pb-2">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList>
-                  <TabsTrigger value="heatmap">Gene Heatmap</TabsTrigger>
                   <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+                  <TabsTrigger value="heatmap">Gene Heatmap</TabsTrigger>
                   <TabsTrigger value="compare">Compare Genes</TabsTrigger>
                 </TabsList>
               </Tabs>
@@ -66,7 +65,6 @@ const Index = () => {
                   <FavoritesPanel
                     onViewGeneDetail={(geneId) => {
                       const gene = mockGenes.find(g => g.id === geneId);
-                      // Implement view details functionality here
                       console.log("View details for", gene?.symbol);
                       setShowFavorites(false);
                     }}
