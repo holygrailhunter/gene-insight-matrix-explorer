@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -574,4 +575,131 @@ const GeneInsightsDashboard = ({ data = mockDashboardData }: Partial<DashboardPr
                         <Bar dataKey="accuracy" fill="#3b82f6" name="Accuracy" />
                         <Bar dataKey="recall" fill="#ef4444" name="Recall" />
                         <Bar dataKey="precision" fill="#16a34a" name="Precision" />
-                        <Bar dataKey="f1Score" fill="#eab308" name="F
+                        <Bar dataKey="f1Score" fill="#eab308" name="F1 Score" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="pathways" className="space-y-6 mt-0">
+          <div className="grid gap-6">
+            <Card className="border-none shadow-md">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Microscope className="h-5 w-5 mr-2 text-blue-500" />
+                  Enriched Pathways
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      layout="vertical"
+                      data={mockPathwayData.enrichedPathways}
+                      margin={{ top: 5, right: 30, left: 100, bottom: 5 }}
+                    >
+                      <XAxis type="number" domain={[0, 4]} />
+                      <YAxis dataKey="pathway" type="category" width={90} />
+                      <Tooltip 
+                        formatter={(value, name) => [
+                          `${value}${name === 'pValue' ? '' : ' genes'}`,
+                          name === 'pValue' ? 'p-value' : name === 'geneCount' ? 'Gene Count' : 'Enrichment Score'
+                        ]}
+                        contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: '8px' }}
+                      />
+                      <Legend />
+                      <Bar dataKey="enrichmentScore" fill="#3b82f6" name="Enrichment Score" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card className="border-none shadow-md">
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center">
+                    <ChartBar className="h-5 w-5 mr-2 text-blue-500" />
+                    Gene Set Overlap
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        data={mockPathwayData.geneSetOverlap}
+                        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                      >
+                        <XAxis dataKey="set" />
+                        <YAxis />
+                        <Tooltip contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: '8px' }} />
+                        <Legend />
+                        <Bar dataKey="overlap" stackId="a" fill="#3b82f6" name="Overlapping Genes" />
+                        <Bar dataKey="uniqueA" stackId="a" fill="#ef4444" name="Unique to Set A" />
+                        <Bar dataKey="uniqueB" stackId="a" fill="#16a34a" name="Unique to Set B" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="border-none shadow-md">
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center">
+                    <FlaskConical className="h-5 w-5 mr-2 text-blue-500" />
+                    Pathway Significance
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+                        <XAxis type="number" dataKey="geneCount" name="Gene Count" />
+                        <YAxis 
+                          type="number" 
+                          dataKey="pValue" 
+                          name="p-value" 
+                          scale="log" 
+                          domain={[0.0001, 0.01]} 
+                          tickFormatter={(value) => value.toExponential(0)}
+                        />
+                        <Tooltip 
+                          formatter={(value, name, props) => {
+                            if (name === 'pValue') {
+                              return [`${value.toExponential(4)}`, 'p-value'];
+                            }
+                            return [value, name];
+                          }}
+                          contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: '8px' }}
+                        />
+                        <Scatter 
+                          name="Pathways" 
+                          data={mockPathwayData.enrichedPathways} 
+                          fill="#8884d8"
+                        >
+                          {mockPathwayData.enrichedPathways.map((entry, index) => (
+                            <Cell 
+                              key={`cell-${index}`} 
+                              fill={entry.pValue < 0.001 ? '#ef4444' : entry.pValue < 0.01 ? '#eab308' : '#3b82f6'} 
+                            />
+                          ))}
+                        </Scatter>
+                        <Legend />
+                      </ScatterChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+};
+
+export default GeneInsightsDashboard;
